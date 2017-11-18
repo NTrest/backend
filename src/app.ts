@@ -44,12 +44,12 @@ app.use(ExpressValidator());
 
 app.use('/', routes.api);
 port = util.normalizePort(process.env.PORT || port);
-app.set('port', this.port);
-server = http.createServer(this.app);
+app.set('port', port);
+server = http.createServer(app);
 
-server.listen(this.port);
-server.on('error', this.onError);
-server.on('listening', this.onListening);
+server.listen(port);
+server.on('error', onError);
+server.on('listening', onListening);
 
 function onError(error: any) {
 	if (error.syscall !== 'listen') {
@@ -76,8 +76,8 @@ function onError(error: any) {
 }
 
 
-let onListening = () => {
-	const addr = this.server.address();
+function onListening() {
+	const addr = server.address();
 	const bind = typeof addr === 'string'
 		? 'pipe ' + addr
 		: 'port ' + addr.port;
