@@ -1,5 +1,5 @@
 import * as fs from 'fs';
 
-export const database = 'mongodb://admin:password@url:port/db'; // TODO: Insert database info
-export const secret: string = <string>fs.readFileSync('secret', 'utf8'); // TODO: Generate Secret Key
-export const domain = 'ntrest.info'; // TODO: Make Domain
+export const database = 'mongodb://admin:XKs89uDYh0PM@ds243085.mlab.com:43085/thedatabase';
+export const secret: string = <string>fs.readFileSync('secret', 'utf8');
+export const domain = 'ntrestapp.me';
