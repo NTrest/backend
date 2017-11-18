@@ -16,7 +16,6 @@ export interface IUser {
     registrationDate: Date
     phoneNumber: string,
     roles: [IUserRole],
-    purchases: [IPurchase],
     passwordResetToken: string,
     passwordResetExpires: Date
 }

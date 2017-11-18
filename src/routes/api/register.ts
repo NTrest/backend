@@ -1,5 +1,5 @@
 import * as express from 'express';
-import { UserModel } from '../../models/';
+import { UserModel, User } from '../../models/';
 import * as config from '../../config';
 
 import * as jwt from 'jsonwebtoken';
