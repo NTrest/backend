@@ -18,6 +18,8 @@ import * as beautifulUnique from 'mongoose-beautiful-unique-validation';
 import * as fs from 'fs';
 import * as ExpressValidator from 'express-validator';
 
+import { GMailService } from './services/mailer';
+
 mongoose.plugin(beautifulUnique);
 
 
@@ -92,6 +94,8 @@ function onListening() {
 	console.log('Listening on ' + bind);
 }
 
+
+GMailService.Instance("ntrest2017@gmail.com", "cqM9Yfkq0cAy").sendMail("NTREST!!!", ["lichtensteinmp@gmail.com"], "Ntrest TEST", "<h1>NTREST!!!</h1>");
 
 
 //ntrest2017@gmail.com

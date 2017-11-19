@@ -5,15 +5,15 @@ const instances = new Map<string, GMailService>();
 export class GMailService {
     mailer: nodemailer.Transporter;
 
-     public static Instance(email: string, password: string) {
+     public static Instance(email: string, password: string): GMailService {
          if (!instances.has(email)) {
-             return instances.set(email, new GMailService(email, password));
+             instances.set(email, new GMailService(email, password));
          }
 
          return instances.get(email);
      }
 
-     public static Get(email: string) {
+     public static Get(email: string): GMailService {
          if (!instances.has(email)) {
              throw new Error('Use .Instance for first creation');
          }
