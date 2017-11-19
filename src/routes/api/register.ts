@@ -19,7 +19,7 @@ export function use(router: express.Router) {
         req.checkBody('password', 'You must enter a password').notEmpty().withMessage('Password must be 8 or more characters long').isLength({min: 8});
         req.checkBody('email', 'Invalid email').isEmail();
         req.checkBody('firstName', 'Invalid first name').notEmpty();
-        req.checkBody('lastName', 'Invalid last name').notEmpty();
+        req.checkBody('lastName', 'Invalid last name').optional();
         req.checkBody('phoneNumber', 'Invalid phone number').optional({checkFalsy: true}).isMobilePhone('en-US');
 
         req.getValidationResult().then((result) => {

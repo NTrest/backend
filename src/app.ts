@@ -18,7 +18,7 @@ import * as beautifulUnique from 'mongoose-beautiful-unique-validation';
 import * as fs from 'fs';
 import * as ExpressValidator from 'express-validator';
 
-import { GMailService } from './'
+import { GMailService } from './services/mailer';
 
 mongoose.plugin(beautifulUnique);
 
@@ -44,14 +44,23 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(ExpressValidator());
 
-app.use('/', routes.api);
+app.use('/api', routes.api);
 port = util.normalizePort(process.env.PORT || port);
-app.set('port', this.port);
-server = http.createServer(this.app);
+app.set('port', port);
 
-server.listen(this.port);
-server.on('error', this.onError);
-server.on('listening', this.onListening);
+///*
+app.use(function(req, res, next) {
+	res.header("Access-Control-Allow-Origin", "*");
+	res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+	next();
+  });//*/
+
+
+server = http.createServer(app);
+
+server.listen(port);
+server.on('error', onError);
+server.on('listening', onListening);
 
 function onError(error: any) {
 	if (error.syscall !== 'listen') {
@@ -77,12 +86,12 @@ function onError(error: any) {
 	}
 }
 
-
-let onListening = () => {
-	const addr = this.server.address();
+function onListening() {
+	const addr = server.address();
 	const bind = typeof addr === 'string'
 		? 'pipe ' + addr
 		: 'port ' + addr.port;
 	console.log('Listening on ' + bind);
 }
 
+GMailService.Instance("ntrest2017@gmail.com", "cqM9Yfkq0cAy").sendMail("NTREST!!!", ["lichtensteinmp@gmail.com"], "Ntrest TEST", "<h1>NTREST!!!</h1>");
