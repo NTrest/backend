@@ -19,4 +19,6 @@ api.login.use(router);
 api.register.use(router);
 api.logout.use(router);
 
+api.pushlocation.use(router);
+
 export {router as api};
