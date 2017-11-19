@@ -18,6 +18,8 @@ import * as beautifulUnique from 'mongoose-beautiful-unique-validation';
 import * as fs from 'fs';
 import * as ExpressValidator from 'express-validator';
 
+import { GMailService } from './'
+
 mongoose.plugin(beautifulUnique);
 
 
@@ -83,3 +85,4 @@ let onListening = () => {
 		: 'port ' + addr.port;
 	console.log('Listening on ' + bind);
 }
+
