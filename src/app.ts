@@ -42,9 +42,18 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(ExpressValidator());
 
-app.use('/', routes.api);
+app.use('/api', routes.api);
 port = util.normalizePort(process.env.PORT || port);
 app.set('port', port);
+
+///*
+app.use(function(req, res, next) {
+	res.header("Access-Control-Allow-Origin", "*");
+	res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+	next();
+  });//*/
+
+
 server = http.createServer(app);
 
 server.listen(port);
