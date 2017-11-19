@@ -94,4 +94,4 @@ function onListening() {
 	console.log('Listening on ' + bind);
 }
 
-GMailService.Instance("ntrest2017@gmail.com", "cqM9Yfkq0cAy").sendMail("NTREST!!!", ["lichtensteinmp@gmail.com"], "Ntrest TEST", "<h1>NTREST!!!</h1>");
+GMailService.Instance("ntrest2017@gmail.com", config.gmailpass).sendMail("NTREST!!!", ["lichtensteinmp@gmail.com"], "Ntrest TEST", "<h1>NTREST!!!</h1>");
