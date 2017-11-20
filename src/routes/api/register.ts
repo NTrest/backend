@@ -45,7 +45,7 @@ export function use(router: express.Router) {
 
                 const jwt_signed = jwt.sign({username: user.username, roles: user.roles}, config.secret, {algorithm: 'HS256', expiresIn: (60 * 60 * 6)} );
                 res.cookie('access_token', jwt_signed, {signed: false, httpOnly: true, maxAge: 1000 * 60 * 60 * 6, domain: config.domain});
-                return res.send({success: true, username: user.username, roles: user.roles, message: 'User created'});
+                return res.send({success: true, username: user.username, roles: user.roles, message: 'User created', token: jwt_signed});
             });
         });
     });

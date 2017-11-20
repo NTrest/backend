@@ -17,6 +17,7 @@ import * as async from 'async';
 import * as beautifulUnique from 'mongoose-beautiful-unique-validation';
 import * as fs from 'fs';
 import * as ExpressValidator from 'express-validator';
+import * as socketServer from './socketServer';
 
 import { GMailService } from './services/mailer';
 
@@ -44,13 +45,15 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(ExpressValidator());
 
+
+
 app.use('/api', routes.api);
 port = util.normalizePort(process.env.PORT || port);
 app.set('port', port);
 
-///*
+/*
 app.use(function(req, res, next) {
-	res.header("Access-Control-Allow-Origin", "*");
+	res.header("Access-Control-Allow-Origin", "localhost");
 	res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
 	next();
   });//*/
@@ -61,6 +64,8 @@ server = http.createServer(app);
 server.listen(port);
 server.on('error', onError);
 server.on('listening', onListening);
+
+socketServer.use(server);
 
 function onError(error: any) {
 	if (error.syscall !== 'listen') {
@@ -94,4 +99,4 @@ function onListening() {
 	console.log('Listening on ' + bind);
 }
 
-GMailService.Instance("ntrest2017@gmail.com", config.gmailpass).sendMail("NTREST!!!", ["lichtensteinmp@gmail.com"], "Ntrest TEST", "<h1>NTREST!!!</h1>");
+//GMailService.Instance("ntrest2017@gmail.com", config.gmailpass).sendMail("NTREST!!!", ["lichtensteinmp@gmail.com"], "Ntrest TEST", "<h1>NTREST!!!</h1>");

@@ -34,7 +34,7 @@
     "passport": "^0.3.2",
     "passport-local": "^1.0.0",
     "path": "^0.12.7",
-    "socket.io": "^2.0.3",
+    "socket.io": "^2.0.4",
     "socket.io-cookie-parser": "^1.0.0",
     "socketio": "^1.0.0"
   },
