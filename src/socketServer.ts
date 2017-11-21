@@ -16,7 +16,6 @@ export function use(http: any) {
 
     io.use(siocookieparser());
     io.use((socket, next) => {
-        console.log('attempt connect');
         const cookie = socket.request.cookies["access_token"] || socket.request._query["token"];
         if (typeof(cookie) === 'undefined') {
             next("No Cookie");
@@ -28,6 +27,8 @@ export function use(http: any) {
                 console.error(error);
                 return next(error);
             }
+
+            console.log("User logged in: " + (<any>decoded).username);
 
             map.set(socket.id, <UserData>{tokenData: decoded, location: {}});
             next();
