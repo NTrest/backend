@@ -17,6 +17,7 @@ export function use(router: express.Router) {
 
             UserModel.findOne({username: req.body.username.toLowerCase()}, (err, user) => {
                 if (err) {
+                    console.log(err);
                     return next(err);
                 }
 

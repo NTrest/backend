@@ -4,22 +4,32 @@ import * as jwt from 'jsonwebtoken';
 import * as config from './config';
 
 
+class UserData {
+    tokenData: any;
+    location: any
+}
+
 export function use(http: any) {
     const io = sio(http);
 
-    const map = new Map<any, any>();
+    const map = new Map<any, UserData>();
 
     io.use(siocookieparser());
     io.use((socket, next) => {
         console.log('attempt connect');
-        console.log(socket.request.cookies);
-        const cookie = socket.request.cookies["access_token"];
+        const cookie = socket.request.cookies["access_token"] || socket.request._query["token"];
+        if (typeof(cookie) === 'undefined') {
+            next("No Cookie");
+            return;
+        } 
         jwt.verify(cookie, config.secret, {algorithms: ["HS256"]}, (error, decoded) => {
             if (error) {
+                console.log(cookie);
+                console.error(error);
                 return next(error);
             }
 
-            map.set(socket.id, decoded);
+            map.set(socket.id, <UserData>{tokenData: decoded, location: {}});
             next();
         });
     });
@@ -27,7 +37,11 @@ export function use(http: any) {
     io.on('connection', (socket) => {
         socket.on('send', (data:any) => {
             const isPublic = data.mode === 0;
-            io.emit(isPublic ? "public" : "private", {username: map.get(socket.id).username, message: data.message});
+            io.emit(isPublic ? "public" : "private", {username: map.get(socket.id).tokenData.username, message: data.message});
+        });
+
+        socket.on('locationUpdate', (data:any) => {
+            map.get(socket.id).location = data.coords;
         })
     });
 }
