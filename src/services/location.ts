@@ -43,6 +43,10 @@ export class LocationService {
             return Promise.resolve(res[0]);
         });
     }
+
+    getCityComparable(entry: geocoder.Entry): string {
+        return `${entry.city}#${entry.administrativeLevels.level1short}#${entry.administrativeLevels.level2short}`;
+    }
     
 
 }
