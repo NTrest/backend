@@ -159,15 +159,14 @@ export function use(http: any) {
                 }
 
                 for (const msg in msgs) {
-                    console.log(msg);
                     socket.emit('public', msgs[msg]);
                 }
 
                 console.log('GETMSGS');
             });
+        });
 
-
-            {
+        socket.on('getdms',() => {
                 const curUser = map.get(socket.id).tokenData.username;
         
                 DMModel.find({$or: [
@@ -179,12 +178,11 @@ export function use(http: any) {
                     }
         
                     dms.sort((a: DM, b: DM) => {
-                        return a.timestamp.getMilliseconds() - b.timestamp.getMilliseconds();
+                        return a.timestamp.getTime() - b.timestamp.getTime();
                     });
                     
-                    socket.emit('dms', dms);
+                    socket.emit('recvdms', dms);
                 });
-            }
         });
 
         socket.on('locationUpdate', (data:any) => {
