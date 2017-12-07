@@ -8,7 +8,8 @@ var certificate = fs.readFileSync('server.crt', 'utf8');
 
 const credentials = {key: privateKey, cert: certificate};
 
-import * as http from 'https';
+import * as https from 'https';
+import * as http from 'http';
 
 import * as util from './util';
 import * as routes from './routes';
@@ -39,8 +40,10 @@ mongoose.connect(config.database, {useMongoClient: true})
 
 
 
-let port: any = "3000"
+let port: any = "3000";
+let httpsPort: any = "3001";
 let server: http.Server;
+let httpsserver: https.Server;
 let app: express.Application;
 
 
@@ -66,9 +69,13 @@ app.set('port', port);
   });//*/
 
 
-server = http.createServer(credentials, app);
+httpsserver = https.createServer(credentials, app);
+server = http.createServer(app);
 
+httpsserver.listen(httpsPort);
 server.listen(port);
+httpsserver.on('error', onError);
+httpsserver.on('listening', onListening);
 server.on('error', onError);
 server.on('listening', onListening);
 
