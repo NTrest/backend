@@ -1,6 +1,7 @@
 import * as cookieparser from 'cookie-parser';
 import * as sio from 'socket.io';
 import * as path from 'path';
+import * as fs from 'fs';
 
 var privateKey  = fs.readFileSync('server.key', 'utf8');
 var certificate = fs.readFileSync('server.crt', 'utf8');
@@ -21,7 +22,7 @@ import * as cookieParser from 'cookie-parser';
 import * as session from 'express-session';
 import * as async from 'async';
 import * as beautifulUnique from 'mongoose-beautiful-unique-validation';
-import * as fs from 'fs';
+
 import * as ExpressValidator from 'express-validator';
 import * as socketServer from './socketServer';
 
