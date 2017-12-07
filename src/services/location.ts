@@ -7,7 +7,7 @@ const options: geocoder.Options = {
     provider: 'google',
    
     // Optional depending on the providers
-    httpAdapter: 'https', // Default
+    httpAdapter: 'http', // Default
     apiKey: config.mapsapikey, // for Mapquest, OpenCage, Google Premier
     formatter: null         // 'gpx', 'string', ...
 };
