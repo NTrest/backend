@@ -80,6 +80,7 @@ server.on('error', onError);
 server.on('listening', onListening);
 
 socketServer.use(server);
+socketServer.use(httpsserver);
 
 function onError(error: any) {
 	if (error.syscall !== 'listen') {
