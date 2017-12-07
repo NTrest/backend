@@ -6,7 +6,7 @@ import * as jwt from 'jsonwebtoken';
 
 export function use(router: express.Router) {
     router.post('/login', (req, res, next) => {
-        req.checkBody('username', 'Invalid Password').notEmpty();
+        req.checkBody('username', 'Invalid username').notEmpty();
         req.checkBody('password', 'Invalid Password').notEmpty();
 
 

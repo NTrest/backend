@@ -2,6 +2,8 @@ import * as sio from 'socket.io';
 import * as siocookieparser from 'socket.io-cookie-parser';
 import * as jwt from 'jsonwebtoken';
 import * as config from './config';
+import { DMModel, DM } from './models/';
+import { MessageModel, Message } from './models/';
 import { LocationService } from './services/location';
 
 
@@ -14,6 +16,7 @@ class UserData {
     lastpull: number;
 }
 const map = new Map<any, UserData>();
+const userMap = new Map<string, any>();
 export function use(http: any) {
     const io = sio(http);
 
@@ -36,6 +39,7 @@ export function use(http: any) {
             console.log("User logged in: " + (<any>decoded).username);
 
             map.set(socket.id, <UserData>{tokenData: decoded, location: {}, comparableLocation: '', lastpull: 0});
+            userMap.set((<any>decoded).username, socket.id);
             next();
         });
     });
@@ -74,28 +78,122 @@ export function use(http: any) {
         }
 
 
+        socket.on('dm', (data:any) => {
+            const username = data.to;
+            const userID = userMap.get(username);
+            const message = {message: data.message, to: username, from: map.get(socket.id).tokenData.username, timestamp: new Date()};
+            
+            
+            DMModel.create(message, (err, dm: DM) => {
+                if (err) {
+                    if (err.name === 'ValidationError') {
+                        let x: any;
+                        const errors: any = (<any>err).errors;
+                        for (x in errors) {
+                            const error = errors[x];
+                            if (error && error.message) {
+                                console.log("ERROR: " + error.message);
+                            }
+                        }
+                    }
+
+                    console.error("Unknown Error occurred while sending DM");
+                }
+
+                if (!!userID) { //User is online
+                    io.to(userID).emit('recvdm', message);
+                }
+            });
+
+        });
+
 
         socket.on('send', (data:any) => {
             const isPublic = data.mode === 0;
             const compLoc = map.get(socket.id).comparableLocation;
+            const message = {username: map.get(socket.id).tokenData.username, message: data.message, compLoc: compLoc};
+
+            if (!isPublic) {
+                return;
+            }
             if (compLoc == '') {
                 return socket.send('locationError', 'LOCATION MUST BE ENABLED IN YOUR BROWSER');
             }
-            io.sockets.in(compLoc).emit(isPublic ? "public" : "private", {username: map.get(socket.id).tokenData.username, message: data.message});
+
+
+            if (isPublic) {
+                MessageModel.create(message, (err, msg: Message) => {
+
+                    if (err) {
+                        if (err.name === 'ValidationError') {
+                            let x: any;
+                            const errors: any = (<any>err).errors;
+                            for (x in errors) {
+                                const error = errors[x];
+                                if (error && error.message) {
+                                    return console.log("ERROR: " + error.message);
+                                }
+                            }
+                        }
+    
+                        return console.error("Unknown Error occurred while adding message");
+                    }
+
+
+
+                    io.sockets.in(compLoc).emit(isPublic ? "public" : "private", {username: map.get(socket.id).tokenData.username, message: data.message});
+                });
+            }
         });
 
         socket.on('disconnect', () => {
             console.log("Disconnection: " + map.get(socket.id).tokenData.username);
+            userMap.delete(map.get(socket.id).tokenData.username);
             map.delete(socket.id);
         });
 
-        socket.on('locationUpdate', (data:any) => {
+        socket.on('getMsgs', () => {
+            MessageModel.find({compLoc: map.get(socket.id).comparableLocation}, (err, msgs: Message[]) => {
+                if (err) {
+                    return console.log(err);
+                }
 
+                for (const msg in msgs) {
+                    console.log(msg);
+                    socket.emit('public', msgs[msg]);
+                }
+
+                console.log('GETMSGS');
+            });
+
+
+            {
+                const curUser = map.get(socket.id).tokenData.username;
+        
+                DMModel.find({$or: [
+                    {'to': curUser},
+                    {'from': curUser}
+                ]}, (err, dms: DM[]) => {
+                    if (err) {
+                        return console.log("ERROR");
+                    }
+        
+                    dms.sort((a: DM, b: DM) => {
+                        return a.timestamp.getMilliseconds() - b.timestamp.getMilliseconds();
+                    });
+                    
+                    socket.emit('dms', dms);
+                });
+            }
+        });
+
+        socket.on('locationUpdate', (data:any) => {
             if (locationTick(data)) {
                 console.log(data);
                 locationService.getLocation(data).then((loc) => {
                     cityChange(loc);
                     console.log(`City Changed to: ${map.get(socket.id).comparableLocation}`);
+                    socket.emit('locationAccept');
                 });
             }
         });

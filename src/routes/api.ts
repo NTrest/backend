@@ -12,11 +12,13 @@ const router = express.Router();
   });*/
 
 router.use(expressJwt({secret: config.secret, getToken: (req) => {
-    return req.cookies['access_token'] || req.body.token;
+    return req.cookies['access_token'] || req.body.token || req.params.token;
 }}).unless({ext: ['/register', '/login', '/logout']}));
 
 api.login.use(router);
 api.register.use(router);
 api.logout.use(router);
+
+api.dm.use(router);
 
 export {router as api};
