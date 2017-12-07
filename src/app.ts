@@ -1,7 +1,13 @@
 import * as cookieparser from 'cookie-parser';
 import * as sio from 'socket.io';
 import * as path from 'path';
-import * as http from 'http';
+
+var privateKey  = fs.readFileSync('server.key', 'utf8');
+var certificate = fs.readFileSync('server.crt', 'utf8');
+
+const credentials = {key: privateKey, cert: certificate};
+
+import * as http from 'https';
 
 import * as util from './util';
 import * as routes from './routes';
@@ -51,15 +57,15 @@ app.use('/api', routes.api);
 port = util.normalizePort(process.env.PORT || port);
 app.set('port', port);
 
-/*
-app.use(function(req, res, next) {
+
+/*app.use(function(req, res, next) {
 	res.header("Access-Control-Allow-Origin", "localhost");
 	res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
 	next();
   });//*/
 
 
-server = http.createServer(app);
+server = http.createServer(credentials, app);
 
 server.listen(port);
 server.on('error', onError);
