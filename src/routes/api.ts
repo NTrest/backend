@@ -6,8 +6,9 @@ import * as config from '../config';
 const router = express.Router();
 
 router.use(function(req, res, next) {
-	res.header("Access-Control-Allow-Origin", "ntrestapp.me");
+	res.header("Access-Control-Allow-Origin", "https://ntrestapp.me");
 	res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+	res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
 	next();
   });
 
